@@ -1,0 +1,15 @@
+*   ad953ce (HEAD -> master, origin/master, origin/HEAD) Merge branch '7-count-tasks-per-category'
+|\
+| * aee34a2 (origin/7-count-tasks-per-category, 7-count-tasks-per-category) Implemented task count per category logic
+* |   5fe7ec2 Merge pull request #12 from zimbakovtech/8-mark-a-task-as-completed-by-name
+|\ \
+| * | ced19e9 (origin/8-mark-a-task-as-completed-by-name, 8-mark-a-task-as-completed-by-name) Implemented task marking as complete by name logic
+| |/
+* |   6aa4c57 Merge pull request #10 from zimbakovtech/1-remove-a-task-by-name
+|\ \
+| |/
+|/|
+| * 4d6e960 (origin/1-remove-a-task-by-name, 1-remove-a-task-by-name) Implemented task removal by name logic
+|/
+* b21ebf9 Add starter code
+* 90a3852 Initial commit

@@ -1,0 +1,21 @@
+git init 
+git remote add origin https://github.com/zimbakovtech/SI_2025_lab1_236093
+nano README.md
+git add .
+git commit -m "Initial commit"
+git checkout 1-remove-a-task-by-name
+git add .
+git commit
+git push
+git fetch
+git checkout 7-count-tasks-per-category
+git add .
+git commit
+git push
+git checkout 8-mark-a-task-as-completed-by-name
+git add .
+git commit 
+git push
+git checkout master
+git merge 7-count-tasks-per-category
+git push origin master
