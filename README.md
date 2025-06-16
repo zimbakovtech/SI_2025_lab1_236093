@@ -10,13 +10,13 @@ Predict ATP tennis match outcomes with advanced machine learning on 2015–2024 
 ## 📋 Table of Contents
 
 1. [Overview](#overview)  
-2. [Key Features](#key-features)  
+2. [Features](#features)  
 3. [Repository Structure](#repository-structure)  
 4. [Installation & Setup](#installation--setup)  
 5. [Data Preparation](#data-preparation)  
 6. [Training & Evaluation](#training--evaluation)  
 7. [Results & Metrics](#results--metrics)  
-8. [Usage](#usage)  
+8. [Feature Importances](#feature-importances)  
 9. [Future Work](#future-work)  
 10. [License](#license)
 
@@ -28,7 +28,7 @@ This project builds, trains, and evaluates multiple classifiers to predict the w
 
 ---
 
-## 🚀 Key Features
+## 🚀 Features
 
 - **Data Ingestion & Cleaning**  
   Load and combine raw CSVs, filter for main‑draw matches, normalize surfaces, and handle missing entries.
@@ -50,10 +50,7 @@ This project builds, trains, and evaluates multiple classifiers to predict the w
   - Neural Network  
 
 - **Evaluation Tools**  
-  Calculate accuracy, AUC‑ROC, confusion matrices, and feature importances.
-
-- **Prediction Utility**  
-  Interactive script to load a trained model and forecast match outcomes by player IDs, surface, and date.
+  Calculate accuracy, confusion matrices, and feature importances.
 
 ---
 
@@ -104,16 +101,14 @@ TennisPrediction/
 
 ## 🗄️ Data Preparation
 
-Run the data pipeline to generate the final dataset:
-```bash
-python src/processing_data.py
-```
-This script:
-- Merges raw files  
-- Encodes categorical features (rounds, surfaces, etc.)  
-- Computes difference metrics (`rank_diff`, `points_diff`, `ace_diff`, etc.)  
-- Mirrors matches for bidirectional modeling  
-- Calculates pre‑match Elo ratings
+1. **Process Data**  
+   Run `processing_data.py` to recreate `all_matches.csv`. This script will:
+   - Load and combine all raw files
+   - Encode categorical values (rounds, surfaces, hand, tournament levels)
+   - Compute differences: `rank_diff`, `points_diff`, `age_diff`, `ace_diff`, `df_diff`, `bp_diff`, `h2h_diff`
+   - Drop redundant or leaking columns
+   - Mirror each match for bidirectional modeling
+   - Calculate pre‑match Elo ratings (K = 32)
 
 ---
 
@@ -132,7 +127,7 @@ Outputs:
 
 ## 📊 Results & Metrics
 
-**XGBoost** achieved the best test accuracy of **66.30%** (67.76% train)  
+**XGBoost** achieved the best test accuracy of **66.34%** (67.77% train)  
 A concise comparison:
 
 | Model             | Test Acc. | Train Acc. |
@@ -140,21 +135,32 @@ A concise comparison:
 | Naive Bayes       |    64.54% |     65.29% |
 | Decision Tree     |    64.07% |     65.64% |
 | Random Forest     |    65.26% |     66.97% |
-| **XGBoost**       | **66.30%**| **67.76%** |
+| **XGBoost**       | **66.34%**| **67.77%** |
 | CatBoost          |    65.63% |     66.26% |
 | LightGBM          |    66.11% |     68.12% |
 | Neural Network    |    65.72% |     66.36% |
 
 ---
 
-## 🎯 Usage
+## 🎯 Feature Importances
 
-1. **Predict a Match**  
-   ```bash
-   python predict.py      --player1_id 1045      --player2_id 2023      --surface Hard      --date 2025-01-20
-   ```
-2. **Visualize Results**  
-   Load saved evaluation plots in the `outputs/` directory.
+Below are the relative importances (as percentages) for the XGBoost model:
+
+| Feature             | Importance (%) |
+|---------------------|---------------:|
+| points_diff         |          48.47 |
+| rank_diff           |           8.02 |
+| player_elo_before   |           6.04 |
+| opponent_elo_before |           5.85 |
+| best_of             |           4.88 |
+| age_diff            |           4.21 |
+| bp_diff             |           4.13 |
+| df_diff             |           3.86 |
+| h2h_diff            |           3.22 |
+| tourney_level       |           3.17 |
+| surface             |           2.81 |
+| round               |           2.74 |
+| ace_diff            |           2.61 |
 
 ---
 
@@ -168,9 +174,52 @@ A concise comparison:
 
 ---
 
+## 📝 Summary
+
+This project employs comprehensive data preparation and advanced feature engineering to predict ATP match outcomes with machine learning. Leveraging Jeff Sackmann’s publicly available match data (2015–2024), we have:
+
+- **Engineered Form Metrics**  
+  Computed rolling averages over each player’s last 10 matches for ace, double‑fault, and break‑point‑saved statistics, then combined these into three different features:  
+  - `ace_diff` (Ace Difference)  
+  - `df_diff` (Double‑Fault Difference)  
+  - `bp_diff` (Break‑Points‑Saved Difference)
+
+- **Head‑to‑Head Insights**  
+  Introduced `h2h_diff`, capturing the win–loss differential between any two players to inform the model of their historical rivalry.
+
+- **Dynamic Elo Ratings**  
+  Implemented a zero‑sum Elo update:  
+  ```
+  E₁ = 1 / (1 + 10^((elo₂ – elo₁) / 400)),  
+  new_elo₁ = elo₁ + K · (S₁ – E₁)
+  ```  
+  (and likewise for player 2), providing richer skill estimates than static ranking points.
+
+- **Class Balance via Row Mirroring**  
+  To avoid a one‑class (“Win”) target, every match row (A beats B) is mirrored: B vs. A with inverted feature signs or swapped values. This doubling ensures a balanced bidirectional dataset.
+
+- **Feature Selection & Overfitting Control**  
+  After experimenting with varying feature sets, we settled on 14 predictors. Hyperparameter tuning (number of estimators, tree depth, etc.) minimized overfitting, yielding only a 1.43 percentage‐point gap between train and test accuracy.
+
+- **Theoretical Accuracy Ceiling**  
+  Tennis match prediction is bounded by game unpredictability:  
+  - **Lower bound (random):** 50 %  
+  - **Upper bound (ideal statistical model):** ~70 %  
+  Mapping our best test accuracy (66.34 %) onto this 50–70 % range gives a scaled success score of **81.7 %**.
+
+- **Tournament‐Specific Performance**  
+  On the Australian Open 2025 (Rounds of 32 through Final), our top XGBoost model achieved **86.67 %** accuracy—surpassing the overall theoretical limit, likely due to a smaller field of elite competitors and more consistent play.
+
+This summary highlights the principal data transformations, modeling strategies, and performance benchmarks that underpin our ATP match‐prediction pipeline.
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License.  
 See the [LICENSE](LICENSE) file for details.
 
-*Prepared by Damjan Zimbakov & Andrej Milevski — June 2025*
+---
+
+*Prepared by Damjan Zimbakov & Andrej Milevski*  
+*June 2025*  
