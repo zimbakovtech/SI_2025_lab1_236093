@@ -77,7 +77,7 @@ TennisPrediction/
 
 ---
 
-## ⚙️ Installation & Setup
+## 💾 Installation & Setup
 
 1. **Clone the repo**  
    ```bash
@@ -112,7 +112,7 @@ TennisPrediction/
 
 ---
 
-## 🏋️‍♂️ Training & Evaluation
+## 🧠 Training & Evaluation
 
 Train and evaluate models with a 70/30 train-test split:
 ```bash
@@ -164,7 +164,7 @@ Below are the relative importances (as percentages) for the XGBoost model:
 
 ---
 
-## 📅 Future Work
+## 🧪 Future Work
 
 - Develop a REST API (Flask/FastAPI) for live predictions  
 - Build a web dashboard with React or static HTML  
