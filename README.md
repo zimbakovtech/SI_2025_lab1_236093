@@ -130,15 +130,29 @@ Outputs:
 **XGBoost** achieved the best test accuracy of **66.34%** (67.77% train)  
 A concise comparison:
 
-| Model             | Test Acc. | Train Acc. |
-|-------------------|----------:|-----------:|
-| Naive Bayes       |    64.54% |     65.29% |
-| Decision Tree     |    64.07% |     65.64% |
-| Random Forest     |    65.26% |     66.97% |
-| **XGBoost**       | **66.34%**| **67.77%** |
-| CatBoost          |    65.63% |     66.26% |
-| LightGBM          |    66.11% |     68.12% |
-| Neural Network    |    65.72% |     66.36% |
+#### Overall Test/Train Metrics
+
+| Model           | Test Acc. (%) | Train Acc. (%) | Brier Score | Log Loss | Test Precision | Test Recall | Test F₁   |
+|-----------------|--------------:|---------------:|------------:|---------:|---------------:|------------:|----------:|
+| Naive Bayes     |         64.54 |          65.29 |        0.24 |     0.73 |           0.65 |        0.65 |      0.65 |
+| Decision Tree   |         64.07 |          65.64 |        0.22 |     0.63 |           0.64 |        0.65 |      0.64 |
+| Random Forest   |         65.36 |          67.07 |        0.21 |     0.61 |           0.65 |        0.65 |      0.65 |
+| **XGBoost**     |       **66.34**|        **67.77**|      **0.21**| **0.61**|         **0.66**|    **0.66**|  **0.66** |
+| CatBoost        |         65.55 |          66.21 |        0.21 |     0.61 |           0.66 |        0.66 |      0.66 |
+| LightGBM        |         66.10 |          68.09 |        0.21 |     0.61 |           0.66 |        0.66 |      0.66 |
+| Neural Network  |         65.40 |          66.48 |        0.21 |     0.61 |           0.66 |        0.65 |      0.65 |
+
+#### Confusion Matrix Breakdown (Test)
+
+| Model           | TN    | FP    | FN    | TP    |
+|-----------------|------:|------:|------:|------:|
+| Naive Bayes     | 5 262 | 2 891 | 2 891 | 5 261 |
+| Decision Tree   | 5 129 | 3 024 | 2 835 | 5 317 |
+| Random Forest   | 5 325 | 2 828 | 2 820 | 5 332 |
+| **XGBoost**     | 5 406 | 2 747 | 2 742 | 5 410 |
+| CatBoost        | 5 337 | 2 816 | 2 801 | 5 351 |
+| LightGBM        | 5 396 | 2 757 | 2 770 | 5 382 |
+| Neural Network  | 5 393 | 2 760 | 2 881 | 5 271 |
 
 ---
 
